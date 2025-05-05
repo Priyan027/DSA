@@ -1,0 +1,86 @@
+#include <iostream>
+#include <queue>
+#include <stack>
+using namespace std;
+
+const int MAX = 100;
+
+int main() {
+    int n, m;
+    cout << "Enter number of vertices: ";
+    cin >> n;
+    cout << "Enter number of edges: ";
+    cin >> m;
+
+    int adj[MAX][MAX] = {0};
+
+    cout << "\nEnter the edges (pairs of vertices):\n";
+    for (int i = 0; i < m; i++) {
+        int u, v;
+        cin >> u >> v;
+        u--; v--; // Convert to 0-based indexing
+        adj[u][v] = 1;
+        adj[v][u] = 1; // Undirected graph
+    }
+
+    cout << "\nThe adjacency matrix of the graph is:\n";
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++)
+            cout << adj[i][j] << " ";
+        cout << endl;
+    }
+
+    // BFS
+    int start;
+    cout << "\nEnter initial vertex for BFS (1 to " << n << "): ";
+    cin >> start;
+    start--; // Convert to 0-based
+
+    bool visited[MAX] = {false};
+    queue<int> q;
+
+    cout << "\nThe BFS of the Graph is:\n";
+    visited[start] = true;
+    q.push(start);
+
+    while (!q.empty()) {
+        int v = q.front();
+        q.pop();
+        cout << v + 1 << " "; // Convert to 1-based for output
+
+        for (int i = 0; i < n; i++) {
+            if (adj[v][i] && !visited[i]) {
+                visited[i] = true;
+                q.push(i);
+            }
+        }
+    }
+
+    // DFS (Iterative Version)
+    cout << "\n\nEnter initial vertex for DFS (1 to " << n << "): ";
+    cin >> start;
+    start--;
+
+    fill(begin(visited), end(visited), false);
+    stack<int> st;
+
+    cout << "The DFS of the Graph is:\n";
+    visited[start] = true;
+    st.push(start);
+
+    while (!st.empty()) {
+        int v = st.top();
+        st.pop();
+        cout << v + 1 << " "; // Convert to 1-based
+
+        for (int i = 0; i < n; i++) {
+            if (adj[v][i] && !visited[i]) {
+                visited[i] = true;
+                st.push(i);
+            }
+        }
+    }
+
+    cout << endl;
+    return 0;
+}

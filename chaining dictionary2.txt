@@ -1,0 +1,123 @@
+#include <iostream>
+#include <list>
+#include <string>
+#include<limits>
+using namespace std;
+
+class HashTable {
+private:
+    static const int TABLE_SIZE = 10;
+
+    struct Pair {
+        string key;
+        string value;
+    };
+
+    list<Pair> table[TABLE_SIZE];
+
+    int hashFunction(const string& key) {
+        int hash = 0;
+        for (char c : key)
+            hash += c;
+        return hash % TABLE_SIZE;
+    }
+
+public:
+    void insert(const string& key, const string& value) {
+        int index = hashFunction(key);
+
+        for (auto& pair : table[index]) {
+            if (pair.key == key) {
+                pair.value = value;
+                return;
+            }
+        }
+
+        table[index].push_back({key, value});
+    }
+
+    void find(const string& key) {
+        int index = hashFunction(key);
+
+        for (auto& pair : table[index]) {
+            if (pair.key == key) {
+                cout << pair.value << endl;
+                return;
+            }
+        }
+
+        cout << "Key not found." << endl;
+    }
+
+    void remove(const string& key) {
+        int index = hashFunction(key);
+
+        for (auto it = table[index].begin(); it != table[index].end(); ++it) {
+            if (it->key == key) {
+                table[index].erase(it);
+                return;
+            }
+        }
+
+        cout << "Key not found." << endl;
+    }
+
+    void display() {
+        cout << "\n--- Hash Table Contents ---\n";
+        for (int i = 0; i < TABLE_SIZE; i++) {
+            cout << "[" << i << "]: ";
+            if (table[i].empty()) {
+                cout << "(empty)";
+            } else {
+                for (auto& pair : table[i]) {
+                    cout << "(" << pair.key << ", " << pair.value << ") -> ";
+                }
+                cout << "NULL";
+            }
+            cout << endl;
+        }
+    }
+    
+};
+
+int main() {
+    HashTable dict;
+    int choice;
+    string key, value;
+
+    do {
+        cout << "\n1. Insert\n2. Find\n3. Delete\n4. Display\n5. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Clear input buffer
+
+        switch (choice) {
+            case 1:
+                cout << "Enter key: ";
+                getline(cin, key);
+                cout << "Enter value: ";
+                getline(cin, value);
+                dict.insert(key, value);
+                break;
+            case 2:
+                cout << "Enter key to find: ";
+                getline(cin, key);
+                dict.find(key);
+                break;
+            case 3:
+                cout << "Enter key to delete: ";
+                getline(cin, key);
+                dict.remove(key);
+                break;
+            case 4:
+                dict.display();
+                break;
+            case 5:
+                break;
+            default:
+                cout << "Invalid choice." << endl;
+        }
+    } while (choice != 5);
+
+    return 0;
+}
